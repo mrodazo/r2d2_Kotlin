@@ -11,18 +11,30 @@
  * El robot tiene un fallo en su programación: cada vez que finaliza una secuencia de pasos y se detiene, gira 90 grados en el sentido contrario a las agujas del reloj.
  */
 
-class Robot(var nombre: String) {
+enum class Direccion {
+    POSITIVEY,
+    NEGATIVEX,
+    NEGATIVEY,
+    POSITIVEX
+}
+
+class Robot(nombre: String) {
     var posX = 0
     var posY = 0
     var dir = 0
+    var nombre: String = ""
+        set(value) {
+            require(value.isNotEmpty()) { "Casque por nombre vacío" }
+            field = value
+        }
+
+    init {
+        this.nombre = nombre //El nombre es obligatorio y no puede estar vacío
+    }
 
     constructor(nombre: String, posX: Int, posY: Int) : this(nombre) {
         this.posX = posX
         this.posY = posY
-    }
-
-    constructor(nombre: String, posX: Int) : this(nombre) {
-        this.posX = posX
     }
 
     constructor(nombre: String, posX: Int, posY: Int, diegoooll: Int) : this(nombre) {
@@ -39,7 +51,7 @@ class Robot(var nombre: String) {
      * @return List<Int>
      */
 
-    fun moverRobot(vararg movis: Int): List<Int> {
+    fun mover(movis: IntArray): List<Int> {
         //Comienza en la posición (0, 0)
         // dir: 0 => POSITIVEY; 1 => NEGATIVEX; 2=> NEGATIVEY; 3 => POSITIVEX
 
@@ -64,7 +76,7 @@ class Robot(var nombre: String) {
      *
      * @return String dirección indicando positivo o negativo del eje X o Y
      */
-    fun orientacionRobot() = when (this.dir) {
+    fun obtenerDireccion() = when (this.dir) {
         0 -> "POSITIVEY"
         1 -> "NEGATIVEX"
         2 -> "NEGATIVEY"
@@ -72,98 +84,34 @@ class Robot(var nombre: String) {
         else -> ""
     }
 
-    fun posicion(): String {
-        return ("x: ${this.posX}, y: ${this.posY}, direction: ${orientacionRobot()}")
-    }
-
-    fun reiniciarPosicion() {
-        this.posX = 0
-        this.posY = 0
-        this.dir = 0
+    fun mostrarPosicion(): String {
+        return ("x: ${this.posX}, y: ${this.posY}, direction: ${obtenerDireccion()}")
     }
 }
 
 fun main() {
 
-    var robot1 = Robot("R2D2")
-    var robot2 = Robot("C3PO", 99, -67)
+    val robot1 = Robot("R2D2")
 
-
-    robot1.moverRobot(10, 5, -2)
-    println(robot1.posicion())
-    robot1.reiniciarPosicion()
-
-    robot1.moverRobot(0, 0, 0)
-    println(robot1.posicion())
-    robot1.reiniciarPosicion()
-
-    robot1.moverRobot()
-    println(robot1.posicion())
-    robot1.reiniciarPosicion()
-
-    robot1.moverRobot(-10, -5, 2)
-    println(robot1.posicion())
-    robot1.reiniciarPosicion()
-
-    robot1.moverRobot(-10, -5, 2, 4, -8)
-    println(robot1.posicion())
-}
-
-
-/*
-var r2d2Pos: List<Int>
-
-//
-r2d2Pos = moverRobot(10, 5, -2)
-println("x: ${r2d2Pos[0]}, y: ${r2d2Pos[1]}, direction: ${orientacionRobot(r2d2Pos[2])}")
-
-r2d2Pos = moverRobot(0, 0, -2)
-println("x: ${r2d2Pos[0]}, y: ${r2d2Pos[1]}, direction: ${orientacionRobot(r2d2Pos[2])}")
-
-r2d2Pos = moverRobot()
-println("x: ${r2d2Pos[0]}, y: ${r2d2Pos[1]}, direction: ${orientacionRobot(r2d2Pos[2])}")
-
-}
-
-
+    val movimientos = listOf(
+        intArrayOf(1, -5, 0, -9),
+        intArrayOf(3, 3, 5, 6, 1, 0, 0, -7),
+        intArrayOf(2, 1, 0, -1, 1, 1, -4),
+        intArrayOf(),
+        intArrayOf(3, 5)
+    )
 /**
-* Realiza el movimiento del robot
-*
-* @param movis Int (vararg) Lista de movimientos a realizar
-*
-* @return List<Int>
-*/
-fun moverRobot (vararg movis: Int): List<Int> {
-
-var posX = 0
-var posY = 0
-var direRobot = 0 //0 => POSITIVEY; 1 => NEGATIVEX; 2=> NEGATIVEY; 3 => POSITIVEX
-
-// Realizar los movimientos en la dirección en la que esté el robot
-for (pasos in movis){
-    println("$pasos")
-    when (direRobot) {
-        0 -> posY += pasos
-        1 -> posX -= pasos
-        2 -> posY -= pasos
-        3 -> posX += pasos
+ * Una forma de hacerlo, pero la segunda es mejor
+    for (movimiento in movimientos) {
+        robot1.mover(movimiento)
+        println(robot1.mostrarPosicion())
     }
-    //Al finalizar cada movimiento
-    if (direRobot == 3) direRobot = 0 else direRobot+=1
-}
-
-return listOf(posY, posX, direRobot)
-}
-
-
-fun orientacionRobot (direRobot: Int) = when (direRobot) {
-    0 -> "POSITIVEY"
-    1 -> "NEGATIVEX"
-    2 -> "NEGATIVEY"
-    3 -> "POSITIVEX"
-    else -> ""
-}
-
-//Modificar el programa para que el usuario introduzca los pasos
-
 */
+    //Usando función lambda, recorre cada elemento de movimientos (it)
+    movimientos.forEach {
+        robot1.mover(it)
+        println(robot1.mostrarPosicion())
+    }
+
+}
+

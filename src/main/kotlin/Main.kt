@@ -41,6 +41,7 @@ class Robot(nombre: String) {
         this.posX = posX
         this.posY = posY
         this.dir = diegoooll
+
     }
 
     /**
